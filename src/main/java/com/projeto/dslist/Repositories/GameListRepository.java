@@ -1,4 +1,4 @@
-package com.projeto.dslist.Repositories;
+package com.projeto.dslist.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

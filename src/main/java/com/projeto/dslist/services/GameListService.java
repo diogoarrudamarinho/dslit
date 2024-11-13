@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.projeto.dslist.Repositories.GameListRepository;
 import com.projeto.dslist.dto.GameListDTO;
+import com.projeto.dslist.repositories.GameListRepository;
 
 @Service
 public class GameListService {
