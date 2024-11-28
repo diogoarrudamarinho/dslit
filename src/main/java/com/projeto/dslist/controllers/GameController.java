@@ -16,6 +16,7 @@ import com.projeto.dslist.services.GameService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.projeto.dslist.dto.GameDTO;
@@ -28,27 +29,30 @@ public class GameController {
     private GameService gameService;
 
     @GetMapping(value = "/{id}")
-    public GameDTO findById(@PathVariable Long id){
-        return gameService.findById(id);
+    public ResponseEntity<GameDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(gameService.findById(id));
     }
 
     @GetMapping
-    public List<GameMinDTO> findAll(){
+    public List<GameMinDTO> findAll() {
         return gameService.findAll();
     }
 
     @PostMapping
-    public ResponseEntity<Game> create(@RequestBody Game newGame) {
-        
-        var gameCreated = gameService.create(newGame);
-        
-        URI location =  ServletUriComponentsBuilder
+    public ResponseEntity<GameDTO> create(@RequestBody Game newGame) {
+        GameDTO gameCreated = gameService.create(newGame);
+        URI location = ServletUriComponentsBuilder
                         .fromCurrentRequest()
                         .path("/{id}")
                         .buildAndExpand(gameCreated.getId())
                         .toUri();
-
         return ResponseEntity.created(location).body(gameCreated);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<GameDTO> update(@PathVariable Long id, @RequestBody Game game) {
+        GameDTO updatedGame = gameService.update(id, game);
+        return ResponseEntity.ok(updatedGame);
     }
     
 }

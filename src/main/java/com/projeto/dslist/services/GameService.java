@@ -2,6 +2,7 @@ package com.projeto.dslist.services;
 
 import java.util.List;
 
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,29 +18,45 @@ public class GameService {
     @Autowired
     private GameRepository gameRepository;
 
-    public Game create(Game newGame){
+    public GameDTO create(Game newGame) {
         if (newGame.getId() != null && gameRepository.existsById(newGame.getId()))
             throw new IllegalArgumentException("User ID already exists");
-        
-        return gameRepository.save(newGame);
+
+        return new GameDTO(gameRepository.save(newGame));
+    }
+
+    public GameDTO findById(Long id) {
+        return new GameDTO( gameRepository.findById(id)
+                            .orElseThrow(() -> new ObjectNotFoundException(
+                                                "Object not Found", id))); 
+    }
+
+    public GameDTO update(Long id, Game game) {
+        Game newGame = gameRepository.findById(id).get();
+
+        newGame.setTitle(game.getTitle());
+        newGame.setYear(game.getYear());
+        newGame.setGenre(game.getGenre());
+        newGame.setPlatforms(game.getPlatforms());
+        newGame.setScore(game.getScore());
+        newGame.setImgUrl(game.getImgUrl());
+        newGame.setShortDescription(game.getShortDescription());
+        newGame.setLongDescription(game.getLongDescription());
+
+        return new GameDTO(gameRepository.save(newGame)); 
     }
 
     @Transactional(readOnly = true)
-    public GameDTO findById(Long id){
-        return new GameDTO(gameRepository.findById(id).get());
-    }
-
-    @Transactional(readOnly = true)
-    public List<GameMinDTO> findAll(){
+    public List<GameMinDTO> findAll() {
         return gameRepository.findAll()
-                .stream().map(game -> new GameMinDTO(game))
+                .stream().map(GameMinDTO::new)
                 .toList();
     }
     
     @Transactional(readOnly = true)
-    public List<GameMinDTO> findByList(Long listId){
+    public List<GameMinDTO> findByList(Long listId) {
         return gameRepository.searchByList(listId)
-                .stream().map(game -> new GameMinDTO(game))
+                .stream().map(GameMinDTO::new)
                 .toList();
     }
 }
