@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.projeto.dslist.dto.GameDTO;
 import com.projeto.dslist.dto.GameMinDTO;
+import com.projeto.dslist.entities.Game;
 import com.projeto.dslist.repositories.GameRepository;
 
 @Service
@@ -15,6 +16,13 @@ public class GameService {
     
     @Autowired
     private GameRepository gameRepository;
+
+    public Game create(Game newGame){
+        if (newGame.getId() != null && gameRepository.existsById(newGame.getId()))
+            throw new IllegalArgumentException("User ID already exists");
+        
+        return gameRepository.save(newGame);
+    }
 
     @Transactional(readOnly = true)
     public GameDTO findById(Long id){
